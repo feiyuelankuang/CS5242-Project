@@ -97,7 +97,7 @@ def train(epoch):
             % (train_loss/(batch_idx+1), 100.*(float)(correct)/(float)(total)))
 
     acc = 100.*(float)(correct)/(float)(total)
-    auc = roc_auc_score(y_true, y_scores)
+    auc = roc_auc_score(y_true, y_score)
     print('auc score is: ', auc)
     statstr = 'Training: Epoch=%d | Loss: %.3f |  Acc: %.3f%% (%d/%d) | AUC: %.3f' \
                 % (epoch, train_loss/(batch_idx+1), acc, correct, total, best_acc)
