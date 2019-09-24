@@ -10,6 +10,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 from sklearn.metrics import roc_auc_score
 import numpy as np
+import csv
 
 parser = argparse.ArgumentParser(description='PyTorch Training')
 parser.add_argument('--lr', '--learning-rate', default=0.01, type=float,
@@ -25,12 +26,12 @@ print(device)
 params = {'batch_size': 32,
           'shuffle': True,
           'num_workers': 2}
-val_params = {'batch_size': 1,
+test_params = {'batch_size': 1,
           'shuffle': False,
-          'num_workers': 1}
+          'num_workers': 2}
 
 
-max_epochs = 100
+max_epochs = 80
 
 # Datasets
 train_dir = 'data/train/'# IDs
@@ -41,8 +42,8 @@ test_label = 'data/sample_solution.csv'
 training_set = Dataset(train_dir, train_label)
 training_generator = data.DataLoader(training_set, **params)
 
-validation_set = Dataset(test_dir, test_label)
-validation_generator = data.DataLoader(validation_set, **val_params)
+test_set = Dataset(test_dir, test_label)
+test_generator = data.DataLoader(test_set, **test_params)
 
 model = resnet34(pretrained=False,num_classes=2)
 if use_cuda:
@@ -100,30 +101,38 @@ def train(epoch):
     auc = roc_auc_score(y_true, y_score)
     print('auc score is: ', auc)
     statstr = 'Training: Epoch=%d | Loss: %.3f |  Acc: %.3f%% (%d/%d) | AUC: %.3f' \
-                % (epoch, train_loss/(batch_idx+1), acc, correct, total, best_acc)
+                % (epoch, train_loss/(batch_idx+1), acc, correct, total, auc)
     statfile.write(statstr+'\n')
 
-start_epoch = 0
 
-for epoch in range(start_epoch, start_epoch+100):
-    if epoch==40 or epoch==60 or epoch==80:
-        decrease_learning_rate()       
-    train(epoch)
 
-def test(filename):
+start_epoch = 1
+
+def test(epoch):
+    print(len(test_generator))
     with torch.no_grad():
-        with open(filename, 'w') as csvFile:
+        with open('result/epoch_'+str(epoch)+'.csv', 'w') as csvFile:
             writer = csv.writer(csvFile)
-            for idx, (inputs, targets) in enumerate(validation_generator):
+            for idx, (inputs, targets) in enumerate(test_generator):
                 if use_cuda:
                     inputs, targets = inputs.to(device), targets.to(device)
 
                 outputs = model(inputs)
+                #print(outputs.data)                
                 _, predicted = torch.max(outputs.data, 1)
-                writer.writerow([idx,predicted])
+                #print(predicted)
+                writer.writerow([int(idx),predicted.data])
         csvFile.close()   
 
-test('result.csv')
+for epoch in range(start_epoch, start_epoch+100):
+    if epoch == 40 or epoch == 60 or epoch == 80:
+        decrease_learning_rate()       
+    train(epoch)
+    if epoch % 20  == 0:
+        test(epoch)
+        torch.save(model.state_dict(), 'checkpoint/resnet34_epoch_' + str(epoch) + '.t7')
+
+
 
 
 

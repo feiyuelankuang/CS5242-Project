@@ -6,13 +6,14 @@ from torchvision import transforms as T
 from torchvision.transforms import functional as F
 from PIL import Image
 
+
 def read_csv(csv_file):
     label_list=[]
     with open(csv_file, 'r') as f:
         reader = csv.reader(f)
         for row in reader:
-            if row[1].isdigit():
-                label_list.append(int(row[1]))
+            if not row[1].isalpha():                
+                label_list.append(int(float(row[1])>0.5))
     return label_list
 #print(read_csv('data/sample_solution.csv'))
 
