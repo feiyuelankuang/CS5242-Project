@@ -25,7 +25,7 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 print(device)
 # Parameters
 
-
+best_auc = 0
 max_epochs = 80
 
 # Datasets
@@ -161,6 +161,11 @@ def val(epoch):
     acc = 100.*(float)(correct)/(float)(total)
     auc = roc_auc_score(y_true, y_score)
     print('auc score is: ', auc)
+    if auc > best_auc:
+        best_auc = auc
+        if epoch > 20:
+            torch.save(model.state_dict(), 'checkpoint/resnet18_best_epoch' + str(epoch) + '.t7')
+            test(epoch)
     statstr = 'Validating: Epoch=%d | Loss: %.3f |  Acc: %.3f%% (%d/%d) | AUC: %.3f' \
                 % (epoch, val_loss/(batch_idx+1), acc, correct, total, auc)
     statfile.write(statstr+'\n')
@@ -191,9 +196,7 @@ for epoch in range(start_epoch, start_epoch+100):
         decrease_learning_rate()       
     train(epoch)
     val(epoch)
-    if epoch % 20  == 0:
- #       test(epoch)
-        torch.save(model.state_dict(), 'checkpoint/resnet18_epoch_' + str(epoch) + '.t7')
+
 
 
 
