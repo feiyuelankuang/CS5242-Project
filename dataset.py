@@ -19,10 +19,11 @@ def read_csv(csv_file):
 
 class Dataset(data.Dataset):
     'Characterizes a dataset for PyTorch'
-    def __init__(self, img_dir, labels):
+    def __init__(self, img_dir, labels, mode = 'eval'):
         'Initialization'
         self.img_dir = img_dir
         self.labels = read_csv(labels)
+        self.mode = mode
 
     def __len__(self):
         'Denotes the total number of samples'
@@ -32,20 +33,32 @@ class Dataset(data.Dataset):
         'Generates one sample of data'
         # Select sample
         img = np.load(self.img_dir+str(index)+'.npy')
-        aspect_ratio = img.shape[0]/img.shape[1]
+#        print(img)
+        x = img.shape[0]
+        y = img.shape[1]
+#        print(x,y)
         img = Image.fromarray(img)
+
 #        print(img)
 #        print(img.shape)
         #print(self.labels)
         label = self.labels[index]      
         Transform = []
-        Transform.append(T.Resize((256,256),Image.NEAREST))
-#        Transform.append(T.Resize((int(300*aspect_ratio),300),Image.NEAREST))
-#        Transform.append(T.RandomCrop((256,256)))
-        Transform.append(T.RandomHorizontalFlip())
+        if self.mode == 'train':
+#        Transform.append(T.Resize((256,256),Image.NEAREST))
+            if x > y:
+                Transform.append(T.Resize((int(256*x/y),256),Image.NEAREST))
+            else:
+                Transform.append(T.Resize((256,int(256*y/x)),Image.NEAREST))
+
+            Transform.append(T.RandomCrop((224,224)))
+            Transform.append(T.RandomHorizontalFlip())
+            #Transform.append(T.ColorJitter(brightness=0.2,contrast=0.2,hue=0.02))
+        else:
+            Transform.append(T.Resize((224,224),Image.NEAREST))
         Transform.append(T.ToTensor())
         Transform = T.Compose(Transform)
         img = Transform(img)
 #        print(label)
- #       print(img.shape)
+#        print(img)
         return img,torch.tensor(label)
