@@ -5,7 +5,7 @@ from dataset import Dataset
 import torchvision
 from utils import progress_bar
 import torch.nn as nn
-from resnet import resnet34,resnet18
+from resnet import resnet34,resnet18,resnet50
 import torch.optim as optim
 from torch.autograd import Variable
 from sklearn.metrics import roc_auc_score
@@ -16,6 +16,7 @@ import csv
 parser = argparse.ArgumentParser(description='PyTorch Training')
 parser.add_argument('--lr', '--learning-rate', default=0.01, type=float,
                     metavar='LR', help='initial learning rate', dest='lr')
+parser.add_argument('--batch_size', '--batch-size', default=64, type=int, help='initial learning rate')
 args = parser.parse_args()
 
 # CUDA for PyTorch
@@ -25,7 +26,6 @@ device = torch.device("cuda:0" if use_cuda else "cpu")
 print(device)
 # Parameters
 
-best_auc = 0
 max_epochs = 80
 
 # Datasets
@@ -48,11 +48,11 @@ train_indices, val_indices = indices[split:], indices[:split]
 train_sampler = SubsetRandomSampler(train_indices)
 val_sampler = SubsetRandomSampler(val_indices)
 
-train_params = {'batch_size': 32,
+train_params = {'batch_size': args.batch_size,
           'num_workers': 2,
           'sampler':train_sampler
           }
-val_params = {'batch_size': 32,
+val_params = {'batch_size': args.batch_size,
           'num_workers': 2,
           'sampler':val_sampler
           }
@@ -68,7 +68,7 @@ test_params = {'batch_size': 1,
 test_set = Dataset(test_dir, test_label)
 test_generator = data.DataLoader(test_set, **test_params)
 
-model = resnet18(pretrained=False,num_classes=2)
+model = resnet50(pretrained=False,num_classes=2)
 if use_cuda:
     model = model.to('cuda:0')
 
@@ -127,13 +127,16 @@ def train(epoch):
                 % (epoch, train_loss/(batch_idx+1), acc, correct, total, auc)
     statfile.write(statstr+'\n')
 
+best_auc = 0
+
 def val(epoch):
     print('\nEpoch: %d' % epoch)
     model.eval()
     val_loss = 0
     correct = 0
     total = 0
- 
+    global best_auc
+    
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(val_generator):
             if use_cuda:
@@ -163,8 +166,8 @@ def val(epoch):
     print('auc score is: ', auc)
     if auc > best_auc:
         best_auc = auc
-        if epoch > 20:
-            torch.save(model.state_dict(), 'checkpoint/resnet18_best_epoch' + str(epoch) + '.t7')
+        if epoch > 60:
+            torch.save(model.state_dict(), 'checkpoint/resnet50_best_epoch' + str(epoch) + '.t7')
             test(epoch)
     statstr = 'Validating: Epoch=%d | Loss: %.3f |  Acc: %.3f%% (%d/%d) | AUC: %.3f' \
                 % (epoch, val_loss/(batch_idx+1), acc, correct, total, auc)
@@ -191,8 +194,8 @@ def test(epoch):
                 writer.writerow([int(idx),int(predicted.data)])
         csvFile.close()   
 
-for epoch in range(start_epoch, start_epoch+100):
-    if epoch == 40 or epoch == 60 or epoch == 80:
+for epoch in range(start_epoch, start_epoch+150):
+    if epoch == 60 or epoch == 90 or epoch == 120:
         decrease_learning_rate()       
     train(epoch)
     val(epoch)

@@ -6,6 +6,9 @@ from torchvision import transforms as T
 from torchvision.transforms import functional as F
 from PIL import Image
 
+def normalized(x):
+#    print(np.min(x),np.max(x))
+    return 255*(x-np.min(x))/(np.max(x)-np.min(x))
 
 def read_csv(csv_file):
     label_list=[]
@@ -33,6 +36,7 @@ class Dataset(data.Dataset):
         'Generates one sample of data'
         # Select sample
         img = np.load(self.img_dir+str(index)+'.npy')
+        img = normalized(img)
 #        print(img)
         x = img.shape[0]
         y = img.shape[1]
@@ -46,16 +50,12 @@ class Dataset(data.Dataset):
         Transform = []
         if self.mode == 'train':
 #        Transform.append(T.Resize((256,256),Image.NEAREST))
-            if x > y:
-                Transform.append(T.Resize((int(256*x/y),256),Image.NEAREST))
-            else:
-                Transform.append(T.Resize((256,int(256*y/x)),Image.NEAREST))
-
+            Transform.append(T.Resize((256,256)))
             Transform.append(T.RandomCrop((224,224)))
             Transform.append(T.RandomHorizontalFlip())
             #Transform.append(T.ColorJitter(brightness=0.2,contrast=0.2,hue=0.02))
         else:
-            Transform.append(T.Resize((224,224),Image.NEAREST))
+            Transform.append(T.Resize((224,224)))
         Transform.append(T.ToTensor())
         Transform = T.Compose(Transform)
         img = Transform(img)
