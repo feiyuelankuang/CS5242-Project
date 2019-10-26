@@ -35,6 +35,8 @@ https://pdfs.semanticscholar.org/fdd6/b60a581ac9f08ad35f0017c5ae0dd4ee6d02.pdf
 
 https://publications.waset.org/10005499/pdf
 
+https://www.cse.msu.edu/~farazah/aisec-ccs09.pdf
+
 ## related github sites (understand, not copy)
 
 https://github.com/riak16/Malware-Detection-using-Deep-Learning
