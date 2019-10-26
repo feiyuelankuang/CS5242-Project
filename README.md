@@ -50,5 +50,3 @@ https://github.com/SayHiRay/malware-detection
 https://github.com/lylin17/malware_detection
 
 https://github.com/lth08091998/CS5242-Project
-
-https://github.com/MengdanCode/2018Sem2Project
