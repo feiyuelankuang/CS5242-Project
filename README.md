@@ -34,3 +34,21 @@ https://www.evilsocket.net/2019/05/22/How-to-create-a-Malware-detection-system-w
 https://pdfs.semanticscholar.org/fdd6/b60a581ac9f08ad35f0017c5ae0dd4ee6d02.pdf
 
 https://publications.waset.org/10005499/pdf
+
+## related github sites (understand, not copy)
+
+https://github.com/riak16/Malware-Detection-using-Deep-Learning
+
+https://github.com/danhph/Cinder/tree/254c8b363f795e75d2313cc516274ae959049973
+
+https://github.com/Patil-Kranti/Dynamic-Malware-Detection-Using-Machine-learning
+
+## last semester/year's CS5242 project (understand, not copy)
+
+https://github.com/SayHiRay/malware-detection
+
+https://github.com/lylin17/malware_detection
+
+https://github.com/lth08091998/CS5242-Project
+
+https://github.com/MengdanCode/2018Sem2Project
