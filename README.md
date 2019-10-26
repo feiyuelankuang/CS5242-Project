@@ -30,3 +30,7 @@ https://www.scitepress.org/papers/2018/66858/66858.pdf
 https://pdf.sciencedirectassets.com/280203/1-s2.0-S1877050918X00052/1-s2.0-S1877050918302965/main.pdf
 
 https://www.evilsocket.net/2019/05/22/How-to-create-a-Malware-detection-system-with-Machine-Learning/
+
+https://pdfs.semanticscholar.org/fdd6/b60a581ac9f08ad35f0017c5ae0dd4ee6d02.pdf
+
+https://publications.waset.org/10005499/pdf
