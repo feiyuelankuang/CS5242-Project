@@ -26,3 +26,7 @@ https://www.covert.io/research-papers/deep-learning-security/Convolutional%20Neu
 https://devblogs.nvidia.com/malware-detection-neural-networks/
 
 https://www.scitepress.org/papers/2018/66858/66858.pdf
+
+https://pdf.sciencedirectassets.com/280203/1-s2.0-S1877050918X00052/1-s2.0-S1877050918302965/main.pdf
+
+https://www.evilsocket.net/2019/05/22/How-to-create-a-Malware-detection-system-with-Machine-Learning/
