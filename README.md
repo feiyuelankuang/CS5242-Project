@@ -45,6 +45,8 @@ https://github.com/danhph/Cinder/tree/254c8b363f795e75d2313cc516274ae959049973
 
 https://github.com/Patil-Kranti/Dynamic-Malware-Detection-Using-Machine-learning
 
+https://github.com/Crystallee612/Malware-detection-based-on-API-sequences?files=1
+
 ## last semester/year's CS5242 project related to malware detection (understand, not copy)
 
 https://github.com/SayHiRay/malware-detection
