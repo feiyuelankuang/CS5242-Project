@@ -37,6 +37,8 @@ https://publications.waset.org/10005499/pdf
 
 https://www.cse.msu.edu/~farazah/aisec-ccs09.pdf
 
+https://link.springer.com/content/pdf/10.1007%2F978-981-13-6621-5_8.pdf
+
 ## related github sites (understand, not copy)
 
 https://github.com/riak16/Malware-Detection-using-Deep-Learning
