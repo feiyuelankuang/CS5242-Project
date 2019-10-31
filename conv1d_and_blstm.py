@@ -19,21 +19,49 @@ directory = "/home/e/evan2133/cs5242project/train/train/"
 listNeed = os.listdir(directory)
 listNeed = list(filter(lambda k: '.npy' in k, listNeed))
 listNeed.sort(key= lambda x: float(x.strip('.npy')))
-pad = np.zeros([1000,102]) # for 0 padding
-data = np.zeros([0,1000,102]) # initialize data
+data_raw = {} # initialize data
 print("Start 0 pad train")
-for filename in listNeed:
+for filename in listNeed: # do not hardcode! hardcoding will cause the code to not work if the number of samples is different!
     if filename.endswith(".npy"):
-        tempFileName = "/home/e/evan2133/cs5242project/train/train/" + filename
+        tempFileName = "/home/e/evan2133/cs5242project/train/train/" + filename # load each file        
+        print(filename) # print the name file
         value = np.load(tempFileName) # load 1000,102 matrix
-        value_pad = value + pad # pad it, this is allowed due to broadcasting
-        value_pad = value_pad.reshape(1, 1000, 102) # reshape for np.concatenate
-        data = np.concatenate((data, value_pad), axis=0
-                              
+        value_columns = value.shape[0]
+        if value_columns < 1000:
+            padding = [[0 for i in range(102)] for j in range(1000 - value_columns)]
+        value_pad = np.concatenate((value, padding), axis = 0) # pad the matrix
+        index = int(filename.strip('.npy')) # get the numerical file name
+        data_raw[index] = value_pad # add to the data
+
+data = np.array(list(data_raw.values()))
 
 print("Finish 0 pad train")
-print("This is printing data.Shape. It should be 18662 * 1000 * 102")
+print("This is printing train data shape. It should be 18662 * 1000 * 102")
 print(data.shape)
+
+testdirectory = "/home/e/evan2133/cs5242project/test/test/"
+testlistNeed = os.listdir(testdirectory)
+testlistNeed = list(filter(lambda k: '.npy' in k, testlistNeed))
+testlistNeed.sort(key= lambda x: float(x.strip('.npy')))
+test_raw = {} # initialize data
+print("Start 0 pad test")
+for filename in testlistNeed: # do not hardcode! hardcoding will cause the code to not work if the number of samples is different!
+    if filename.endswith(".npy"):
+        tempFileName = "/home/e/evan2133/cs5242project/test/test/" + filename # load each file        
+        print(filename) # print the name file
+        testvalue = np.load(tempFileName) # load 1000,102 matrix
+        testvalue_columns = testvalue.shape[0]
+        if testvalue_columns < 1000:
+            testpadding = [[0 for i in range(102)] for j in range(1000 - testvalue_columns)]
+        testvalue_pad = np.concatenate((testvalue, testpadding), axis = 0) # pad the matrix
+        testindex = int(filename.strip('.npy')) # get the numerical file name
+        test_raw[index] = value_pad # add to the data
+
+test = np.array(list(test_raw.values()))
+
+print("Finish 0 pad test")
+print("This is printing test data shape. It should be 6051 * 1000 * 102")
+print(test.shape)
 
 labels = pd.read_csv("/home/e/evan2133/cs5242project/train_kaggle.csv")
 labels = labels.drop(labels.columns[[0]], axis = 1)
