@@ -1,4 +1,4 @@
-# group7_project
+# group7_project (using NLP (CS4248) and my good friend's model)
 
 ## prerequisite
 
