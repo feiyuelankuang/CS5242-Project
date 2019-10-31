@@ -2,10 +2,16 @@
 
 ## prerequisite
 
-please download dataset to data folder before running the code.
+please download dataset to train/train and test/test folder before running the code.
 
-also put .csv under data folder
+also put train .csv in the same directory as the .py
 
-this code is based on model from one of my last year's NLP (CS4248) programming assignment as well as after through discussion with my good friend
+## usage
 
-remember to change the train and test directories appropiately
+python nlpgoodfriend.py
+
+## remarks
+
+this code is based on model from one of my last year's NLP (CS4248) programming assignment as well as after thorough discussion with my good friend
+
+remember to change the train, train.csv, and test directories appropiately
