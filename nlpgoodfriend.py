@@ -63,6 +63,8 @@ print("Finish 0 pad test")
 print("This is printing test data shape. It should be 6051 * 1000 * 102")
 print(test.shape)
 
+#TODO (to save time): save the 0-padded train and test data so that it can be reloaded
+
 #data = data[:,:,:92]
 #print("This is printing feature selected (hashtricking) train data shape. It should be 18662 * 1000 * 92")
 #print(data.shape)
