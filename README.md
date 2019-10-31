@@ -9,7 +9,9 @@ also put .csv under data folder
 note that training dataset should be under data/train/ instead of data/train/train/, same for testing data
 
 ## usage
-python train.py --lr 'your learning rate' --batch_size 'your batch size'
+python train.py --model 'your model' --lr 'your learning rate' --batch_size 'your batch size'
+
+for new model, run python train_embedding --model 'MalwareNet' --lr 'your learning rate' --batch_size 'your batch size'
 
 ## related paper or blog
 
