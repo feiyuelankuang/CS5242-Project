@@ -67,9 +67,12 @@ print(test.shape)
 #print("This is printing feature selected (hashtricking) train data shape. It should be 18662 * 1000 * 92")
 #print(data.shape)
 
+print("Start to retrieve train labels")
 labels = pd.read_csv("/home/e/evan2133/cs5242project/train_kaggle.csv")
 labels = labels.drop(labels.columns[[0]], axis = 1)
+print("Finish to retrieve train labels")
 
+print("Adding model")
 model = Sequential() # to be able to add several models at once
 model.add(BatchNormalization()) # do batch normalization ??
 model.add(Conv1D(filters=64, kernel_size=2, stride=1, padding='same', activation='relu')) # conv1d here, try power of 2 for filters (32, 64, 128), try 2, 3, 4 for kernel_size, may try conv2d also for comparison
@@ -78,9 +81,15 @@ model.add(GlobalMaxPooling1D(pool_size=2)) # do global max pooling (try 2, 3, 4 
 model.add(Dense(256, activation='relu')) # fully connected with relu (try with powers of 2 or some other good numbers)
 model.add(Dropout(0.5)) # want to add dropout??
 model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid (to cover some decimals), to 1 because we are dealing with a single number for the target values (technically this is a binary classification whether a file is malware or not)
+print("Finish adding model")
 myadam = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
+print("Compile model")
 model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=['auc']) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above, use AUC for determining quality of the learner (consistent with Kaggle)
+print("Finish compile model. Fit model")
 model.fit(data, labels, epochs=1000, batch_size=64) # batch_size is recommended to be in the power of 2
+print("Finish fit model. Now predict model")
 results = model.predict(test, batch_size=64) # test it
+print("Finish predict model. Now saving to csv")
 results_df = pd.DataFrame(results, columns=['Id', 'Predicted']) # kaggle format
 results_df.to_csv('results.csv', index=True) # save for Kaggle submission :)
+print("Everything is done!")
