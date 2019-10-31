@@ -1,5 +1,5 @@
 model = Sequential() # to be able to add several models at once
-model.add(Embedding(102, 92)) # convert 102 columns into just 92 columns
+# removed this line. Given the input shape is (18662, 1000, 102), for extracting the first 92 columns (out of 102) for hashtricks embedding/feature selection, please use tf.slice(input, [0, 0, 0], [-1, -1, 92]) for tensorflow 3d tensor or input[:,:,:92] for numpy 3d array
 model.add(Conv1D(filters=64, kernel_size=2, stride=1, padding='same', activation='relu')) # conv1d here
 model.add(BatchNormalization()) # do batch normalization ??
 model.add(MaxPooling1D(pool_size=2)) # do max pooling
