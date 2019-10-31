@@ -58,3 +58,7 @@ https://github.com/SayHiRay/malware-detection
 https://github.com/lylin17/malware_detection
 
 https://github.com/lth08091998/CS5242-Project
+
+## why batch size (and some neural network parameters) are preferably chosen to be a power of 2
+
+https://datascience.stackexchange.com/questions/20179/what-is-the-advantage-of-keeping-batch-size-a-power-of-2?rq=1
