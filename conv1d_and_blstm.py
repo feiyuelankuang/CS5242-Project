@@ -78,4 +78,4 @@ model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid
 myadam = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
 model.compile(loss='binary_crossentropy', optimizer=myadam) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above
 model.fit(data, labels, epochs=1000, batch_size=64) # batch_size is recommended to be in the power of 2
-model.predict(testdata, batch_size=64) # test it
+model.predict(test, batch_size=64) # test it
