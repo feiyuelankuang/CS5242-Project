@@ -73,12 +73,14 @@ labels = labels.drop(labels.columns[[0]], axis = 1)
 model = Sequential() # to be able to add several models at once
 model.add(BatchNormalization()) # do batch normalization ??
 model.add(Conv1D(filters=64, kernel_size=2, stride=1, padding='same', activation='relu')) # conv1d here, try power of 2 for filters (32, 64, 128), try 2, 3, 4 for kernel_size, may try conv2d also for comparison
-model.add(Bidirectional(LSTM(128, return_sequences=True))) # this is BLSTM. Try a "good number" (50, 100, 200) or "power of 2" (32, 64, 128, 256) to compare and see, try comment it out and compare and see, return full sequences here
-model.add(GlobalMaxPooling1D(pool_size=2)) # do global max pooling (try 2, 3, 4 for pool size)
+model.add(Bidirectional(LSTM(128, return_sequences=True))) # this is BLSTM. Try a "good number" (50, 100, 200) or "power of 2" (32, 64, 128, 256) to compare and see, try comment this layer out and compare and see, return full sequences here
+model.add(GlobalMaxPooling1D(pool_size=2)) # do global max pooling (try 2, 3, 4 for pool size), for conv2d make sure to change 1d to 2d!
 model.add(Dense(256, activation='relu')) # fully connected with relu (try with powers of 2 or some other good numbers)
 model.add(Dropout(0.5)) # want to add dropout??
-model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid, to 1 because we are dealing with a single number for the target values (technically this is a binary classification whether a file is malware or not)
+model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid (to cover some decimals), to 1 because we are dealing with a single number for the target values (technically this is a binary classification whether a file is malware or not)
 myadam = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
 model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=['auc']) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above, use AUC for determining quality of the learner (consistent with Kaggle)
 model.fit(data, labels, epochs=1000, batch_size=64) # batch_size is recommended to be in the power of 2
-model.predict(test, batch_size=64) # test it
+results = model.predict(test, batch_size=64) # test it
+results_df = pd.DataFrame(results, columns=['Id', 'Predicted']) # kaggle format
+results_df.to_csv('results.csv', index=False) # save for Kaggle submission :)
