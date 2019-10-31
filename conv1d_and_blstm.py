@@ -77,8 +77,8 @@ model.add(Bidirectional(LSTM(128, return_sequences=True))) # this is BLSTM. Try 
 model.add(GlobalMaxPooling1D(pool_size=2)) # do global max pooling (try 2, 3, 4 for pool size)
 model.add(Dense(256, activation='relu')) # fully connected with relu (try with powers of 2 or some other good numbers)
 model.add(Dropout(0.5)) # want to add dropout??
-model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid
+model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid, to 1 because we are dealing with a single number for the target values (technically this is a binary classification whether a file is malware or not)
 myadam = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
-model.compile(loss='binary_crossentropy', optimizer=myadam) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above
+model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=['auc']) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above, use AUC for determining quality of the learner (consistent with Kaggle)
 model.fit(data, labels, epochs=1000, batch_size=64) # batch_size is recommended to be in the power of 2
 model.predict(test, batch_size=64) # test it
