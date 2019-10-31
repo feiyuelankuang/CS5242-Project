@@ -66,11 +66,12 @@ print(test.shape)
 #data = data[:,:,:92]
 #print("This is printing feature selected (hashtricking) train data shape. It should be 18662 * 1000 * 92")
 #print(data.shape)
-
 print("Start to retrieve train labels")
 labels = pd.read_csv("/home/e/evan2133/cs5242project/train_kaggle.csv")
 labels = labels.drop(labels.columns[[0]], axis = 1)
 print("Finish to retrieve train labels")
+
+#TODO: add train-test split for validation of the model (80%:20%)
 
 print("Adding model")
 model = Sequential() # to be able to add several models at once
