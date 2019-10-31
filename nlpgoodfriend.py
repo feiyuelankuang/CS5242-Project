@@ -71,7 +71,7 @@ labels = pd.read_csv("/home/e/evan2133/cs5242project/train_kaggle.csv")
 labels = labels.drop(labels.columns[[0]], axis = 1)
 print("Finish to retrieve train labels")
 
-#TODO: add train-test split for validation of the model (80%:20%)
+#OPTIONAL TODO: add train-test split for validation of the model (80%:20%)
 
 print("Adding model")
 model = Sequential() # to be able to add several models at once
