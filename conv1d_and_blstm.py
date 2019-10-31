@@ -10,26 +10,28 @@ from keras.layers import Dropout
 from keras.layers import BatchNormalization
 from keras.layers import Conv1D, GlobalMaxPooling1D, MaxPooling1D
 from keras.layers import Conv2D, GlobalMaxPooling2D, MaxPooling2D
+from keras import optimizers
+from keras import metrics
 
 import os
 
-names = []
 directory = "/home/e/evan2133/cs5242project/train/train/"
 listNeed = os.listdir(directory)
 listNeed = list(filter(lambda k: '.npy' in k, listNeed))
 listNeed.sort(key= lambda x: float(x.strip('.npy')))
 pad = np.zeros([1000,102]) # for 0 padding
 data = np.zeros([0,1000,102]) # initialize data
-print("Start 0 pad")
+print("Start 0 pad train")
 for filename in listNeed:
     if filename.endswith(".npy"):
         tempFileName = "/home/e/evan2133/cs5242project/train/train/" + filename
         value = np.load(tempFileName) # load 1000,102 matrix
         value_pad = value + pad # pad it, this is allowed due to broadcasting
         value_pad = value_pad.reshape(1, 1000, 102) # reshape for np.concatenate
-        data = np.concatenate((data, value_pad), axis=0)
+        data = np.concatenate((data, value_pad), axis=0
+                              
 
-print("Finish 0 pad")
+print("Finish 0 pad train")
 print("This is printing data.Shape. It should be 18662 * 1000 * 102")
 print(data.shape)
 
@@ -45,3 +47,7 @@ model.add(GlobalMaxPooling1D(pool_size=2)) # do global max pooling (try 2, 3, 4 
 model.add(Dense(256, activation='relu')) # fully connected with relu (try with powers of 2 or some other good numbers)
 model.add(Dropout(0.5)) # want to add dropout??
 model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid
+myadam = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
+model.compile(loss='binary_crossentropy', optimizer=myadam) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above
+model.fit(data, labels, epochs=1000, batch_size=64) # batch_size is recommended to be in the power of 2
+model.predict(testdata, batch_size=64) # test it
