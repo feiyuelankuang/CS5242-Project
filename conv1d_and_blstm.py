@@ -83,4 +83,4 @@ model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=['auc']) # u
 model.fit(data, labels, epochs=1000, batch_size=64) # batch_size is recommended to be in the power of 2
 results = model.predict(test, batch_size=64) # test it
 results_df = pd.DataFrame(results, columns=['Id', 'Predicted']) # kaggle format
-results_df.to_csv('results.csv', index=False) # save for Kaggle submission :)
+results_df.to_csv('results.csv', index=True) # save for Kaggle submission :)
