@@ -63,11 +63,14 @@ print("Finish 0 pad test")
 print("This is printing test data shape. It should be 6051 * 1000 * 102")
 print(test.shape)
 
+#data = data[:,:,:92]
+#print("This is printing feature selected (hashtricking) train data shape. It should be 18662 * 1000 * 92")
+#print(data.shape)
+
 labels = pd.read_csv("/home/e/evan2133/cs5242project/train_kaggle.csv")
 labels = labels.drop(labels.columns[[0]], axis = 1)
 
 model = Sequential() # to be able to add several models at once
-# removed this line. Given the input shape is (18662, 1000, 102), for extracting the first 92 columns (out of 102) for hashtricks embedding/feature selection, please use tf.slice(input, [0, 0, 0], [-1, -1, 92]) for tensorflow 3d tensor or input[:,:,:92] for numpy 3d array
 model.add(BatchNormalization()) # do batch normalization ??
 model.add(Conv1D(filters=64, kernel_size=2, stride=1, padding='same', activation='relu')) # conv1d here, try power of 2 for filters (32, 64, 128), try 2, 3, 4 for kernel_size, may try conv2d also for comparison
 model.add(Bidirectional(LSTM(128, return_sequences=True))) # this is BLSTM. Try a "good number" (50, 100, 200) or "power of 2" (32, 64, 128, 256) to compare and see, try comment it out and compare and see, return full sequences here
