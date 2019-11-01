@@ -66,7 +66,7 @@ print(test.shape)
 
 #TODO (to save time): save the 0-padded train and test data so that it can be reloaded
 
-#data_raw = data_raw[:,:,:92]
+#data = data[:,:,:92]
 #print("This is printing feature selected (hashtricking) train data shape. It should be 18662 * 1000 * 92")
 #print(data.shape)
 print("Start to retrieve train labels")
