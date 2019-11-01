@@ -101,5 +101,5 @@ print("Finish fit model. Now predict model")
 results = model.predict(test, batch_size=64, verbose=1) # test it
 print("Finish predict model. Now saving to csv")
 results_df = pd.DataFrame(results, columns=['Predicted']) # kaggle format
-results_df.to_csv('results.csv', index=True, index_label='Id') # save for Kaggle submission :)
+results_df.to_csv('/home/e/evan2133/cs5242project/results.csv', index=True, index_label='Id') # save for Kaggle submission :)
 print("Everything is done!")
