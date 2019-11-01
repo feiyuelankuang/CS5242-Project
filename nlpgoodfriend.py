@@ -20,7 +20,7 @@ directory = "/home/e/evan2133/cs5242project/train/train/"
 listNeed = os.listdir(directory)
 listNeed = list(filter(lambda k: '.npy' in k, listNeed))
 listNeed.sort(key= lambda x: float(x.strip('.npy')))
-data_raw = {} # initialize data
+data = {} # initialize data
 print("Start 0 pad train")
 for filename in listNeed: # do not hardcode! hardcoding will cause the code to not work if the number of samples is different!
     if filename.endswith(".npy"):
@@ -31,10 +31,9 @@ for filename in listNeed: # do not hardcode! hardcoding will cause the code to n
         if value_columns < 1000:
             padding = [[0 for i in range(102)] for j in range(1000 - value_columns)]
             value = np.concatenate((value, padding), axis = 0) # pad the matrix
-        index = int(filename.strip('.npy')) # get the numerical file name
-        data_raw[index] = value # add to the data
+        data[filename] = value # add to the data
 
-data = np.array(list(data_raw.values()))
+data = np.array(list(data.values()))
 
 print("Finish 0 pad train")
 print("This is printing train data shape. It should be 18662 * 1000 * 102")
@@ -44,7 +43,7 @@ testdirectory = "/home/e/evan2133/cs5242project/test/test/"
 testlistNeed = os.listdir(testdirectory)
 testlistNeed = list(filter(lambda k: '.npy' in k, testlistNeed))
 testlistNeed.sort(key= lambda x: float(x.strip('.npy')))
-test_raw = {} # initialize data
+test = {} # initialize data
 print("Start 0 pad test")
 for filename in testlistNeed: # do not hardcode! hardcoding will cause the code to not work if the number of samples is different!
     if filename.endswith(".npy"):
@@ -55,10 +54,9 @@ for filename in testlistNeed: # do not hardcode! hardcoding will cause the code 
         if testvalue_columns < 1000:
             testpadding = [[0 for i in range(102)] for j in range(1000 - testvalue_columns)]
             testvalue = np.concatenate((testvalue, testpadding), axis = 0) # pad the matrix
-        testindex = int(filename.strip('.npy')) # get the numerical file name
-        test_raw[index] = testvalue # add to the data
+        test[filename] = testvalue # add to the data
 
-test = np.array(list(test_raw.values()))
+test = np.array(list(test.values()))
 
 print("Finish 0 pad test")
 print("This is printing test data shape. It should be 6051 * 1000 * 102")
@@ -66,7 +64,7 @@ print(test.shape)
 
 #TODO (to save time): save the 0-padded train and test data so that it can be reloaded
 
-#data = data[:,:,:92]
+#data_raw = data_raw[:,:,:92]
 #print("This is printing feature selected (hashtricking) train data shape. It should be 18662 * 1000 * 92")
 #print(data.shape)
 print("Start to retrieve train labels")
