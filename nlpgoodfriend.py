@@ -30,8 +30,9 @@ for filename in listNeed: # do not hardcode! hardcoding will cause the code to n
         value_columns = value.shape[0]
         if value_columns < 1000:
             padding = [[0 for i in range(102)] for j in range(1000 - value_columns)]
-            value = np.concatenate((value, padding), axis = 0) # pad the matrix
-        data[filename] = value # add to the data
+            value = np.concatenate((value, padding), axis = 0) # pad the matrix\
+        index = int(filename.strip('.npy')) # get the numerical file name
+        data[index] = value # add to the data
 
 data = np.array(list(data.values()))
 
@@ -54,7 +55,8 @@ for filename in testlistNeed: # do not hardcode! hardcoding will cause the code 
         if testvalue_columns < 1000:
             testpadding = [[0 for i in range(102)] for j in range(1000 - testvalue_columns)]
             testvalue = np.concatenate((testvalue, testpadding), axis = 0) # pad the matrix
-        test[filename] = testvalue # add to the data
+        testindex = int(filename.strip('.npy')) # get the numerical file name
+        test[testindex] = testvalue # add to the data
 
 test = np.array(list(test.values()))
 
