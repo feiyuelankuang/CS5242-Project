@@ -11,7 +11,8 @@ from keras.layers import BatchNormalization
 from keras.layers import Conv1D, GlobalMaxPooling1D, MaxPooling1D
 from keras.layers import Conv2D, GlobalMaxPooling2D, MaxPooling2D
 from keras import optimizers
-from keras import metrics
+from sklearn import metrics
+from keras import backend as K
 
 import os
 
@@ -29,9 +30,9 @@ for filename in listNeed: # do not hardcode! hardcoding will cause the code to n
         value_columns = value.shape[0]
         if value_columns < 1000:
             padding = [[0 for i in range(102)] for j in range(1000 - value_columns)]
-        value_pad = np.concatenate((value, padding), axis = 0) # pad the matrix
+            value = np.concatenate((value, padding), axis = 0) # pad the matrix
         index = int(filename.strip('.npy')) # get the numerical file name
-        data_raw[index] = value_pad # add to the data
+        data_raw[index] = value # add to the data
 
 data = np.array(list(data_raw.values()))
 
@@ -53,9 +54,9 @@ for filename in testlistNeed: # do not hardcode! hardcoding will cause the code 
         testvalue_columns = testvalue.shape[0]
         if testvalue_columns < 1000:
             testpadding = [[0 for i in range(102)] for j in range(1000 - testvalue_columns)]
-        testvalue_pad = np.concatenate((testvalue, testpadding), axis = 0) # pad the matrix
+            testvalue = np.concatenate((testvalue, testpadding), axis = 0) # pad the matrix
         testindex = int(filename.strip('.npy')) # get the numerical file name
-        test_raw[index] = value_pad # add to the data
+        test_raw[index] = testvalue # add to the data
 
 test = np.array(list(test_raw.values()))
 
@@ -70,28 +71,34 @@ print(test.shape)
 #print(data.shape)
 print("Start to retrieve train labels")
 labels = pd.read_csv("/home/e/evan2133/cs5242project/train_kaggle.csv")
-labels = labels.drop(labels.columns[[0]], axis = 1)
+labels = labels.drop(labels.columns[[0]], axis = 1).to_numpy()
 print("Finish to retrieve train labels")
 
 #OPTIONAL TODO: add train-test split for validation of the model (80%:20%)
 
+#to use auc
+def auc(actual, predict):
+    auc = tf.metrics.auc(actual, predict)[1]
+    K.get_session().run(tf.local_variables_initializer())
+    return auc
+
 print("Adding model")
 model = Sequential() # to be able to add several models at once
 model.add(BatchNormalization()) # do batch normalization first
-model.add(Conv1D(filters=64, kernel_size=2, stride=1, padding='same', activation='relu')) # conv1d here, try power of 2 for filters (32, 64, 128), try 2, 3, 4 for kernel_size, may try conv2d also for comparison
+model.add(Conv1D(filters=64, kernel_size=2, strides=1, padding='same', activation='relu')) # conv1d here, try power of 2 for filters (32, 64, 128), try 2, 3, 4 for kernel_size, compare same vs valid padding, may try conv2d also for comparison
 model.add(Bidirectional(LSTM(128, return_sequences=True))) # this is BLSTM. Try a "good number" (50, 100, 200) or "power of 2" (32, 64, 128, 256) to compare and see, try comment this layer out and compare and see, return full sequences here
-model.add(GlobalMaxPooling1D(pool_size=2)) # do global max pooling (try 2, 3, 4 for pool size), for conv2d make sure to change 1d to 2d!
+model.add(GlobalMaxPooling1D()) # do global max pooling, for conv2d make sure to change 1d to 2d! (global max pooling takes no parameters), or try max pooling which has parameters (pool_size, default/recommended:2)
 model.add(Dense(256, activation='relu')) # fully connected with relu (try with powers of 2 or some other good numbers)
 model.add(Dropout(0.5)) # dropout the layers. Change appropiately if you have time and attempts.
 model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid (to cover some decimals), to 1 because we are dealing with a single number for the target values (technically this is a binary classification whether a file is malware or not)
 print("Finish adding model")
-myadam = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
+myadam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
 print("Compile model")
-model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=['auc']) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above, use AUC for determining quality of the learner (consistent with Kaggle)
+model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=[auc]) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above, use AUC (optional, but strongly recommended) for determining quality of the learner (consistent with Kaggle)
 print("Finish compile model. Now fit model")
-model.fit(data, labels, epochs=1000, batch_size=64) # batch_size is recommended to be in the power of 2
+model.fit(data, labels, epochs=1000, batch_size=64, verbose=2) # batch_size is recommended to be in the power of 2
 print("Finish fit model. Now predict model")
-results = model.predict(test, batch_size=64) # test it
+results = model.predict(test, batch_size=64, verbose=1) # test it
 print("Finish predict model. Now saving to csv")
 results_df = pd.DataFrame(results, columns=['Predicted']) # kaggle format
 results_df.to_csv('results.csv', index=True, index_label='Id') # save for Kaggle submission :)
