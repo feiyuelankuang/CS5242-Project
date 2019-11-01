@@ -13,6 +13,7 @@ from keras.layers import Conv2D, GlobalMaxPooling2D, MaxPooling2D
 from keras import optimizers
 from sklearn import metrics
 from keras import backend as K
+# import tensorflow.python.keras.backend as K (for tensorflow 2.0)
 
 import os
 
