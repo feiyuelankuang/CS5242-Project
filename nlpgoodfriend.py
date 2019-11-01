@@ -88,7 +88,7 @@ print("Finish adding model")
 myadam = optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
 print("Compile model")
 model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=['auc']) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above, use AUC for determining quality of the learner (consistent with Kaggle)
-print("Finish compile model. Fit model")
+print("Finish compile model. Now fit model")
 model.fit(data, labels, epochs=1000, batch_size=64) # batch_size is recommended to be in the power of 2
 print("Finish fit model. Now predict model")
 results = model.predict(test, batch_size=64) # test it
