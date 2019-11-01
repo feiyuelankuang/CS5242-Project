@@ -78,7 +78,7 @@ print("Finish to retrieve train labels")
 
 #to use auc
 def auc(actual, predict):
-    auc = tf.metrics.auc(actual, predict)[1]
+    auc = tf.compat.v1.metrics.auc(actual, predict)[1]
     K.get_session().run(tf.local_variables_initializer())
     return auc
 
