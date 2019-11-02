@@ -16,47 +16,51 @@ from keras import backend as K
 
 import os
 
-directory = "/home/e/evan2133/cs5242project/train/train/"
+directory = "/Users/Bumblebee/Desktop/Y4S1/CS5242/ProjectData/train/train"
 listNeed = os.listdir(directory)
 listNeed = list(filter(lambda k: '.npy' in k, listNeed))
 listNeed.sort(key= lambda x: float(x.strip('.npy')))
-data = {} # initialize data
+data = [] # initialize data
+
 print("Start 0 pad train")
-for filename in listNeed: # do not hardcode! hardcoding will cause the code to not work if the number of samples is different!
+for filename in listNeed:
     if filename.endswith(".npy"):
-        tempFileName = "/home/e/evan2133/cs5242project/train/train/" + filename # load each file        
-        print(filename) # print the name file
+        tempFileName = "/Users/Bumblebee/Desktop/Y4S1/CS5242/ProjectData/train/train/" + filename # load each file
         value = np.load(tempFileName) # load 1000,102 matrix
         value_columns = value.shape[0]
         if value_columns < 1000:
-            padding = [[0 for i in range(102)] for j in range(1000 - value_columns)]
-            value = np.concatenate((value, padding), axis = 0) # pad the matrix
-        data[filename] = value # add to the data
+            lengthNeededToPad = 1000 - value_columns
+            value = np.pad(value, ((0,lengthNeededToPad),(0,0)), 'constant')
 
-data = np.array(list(data.values()))
+        data.append(value)
+
+data = np.array(data)
+
 
 print("Finish 0 pad train")
+
 print("This is printing train data shape. It should be 18662 * 1000 * 102")
+print(type(data))
 print(data.shape)
 
-testdirectory = "/home/e/evan2133/cs5242project/test/test/"
+testdirectory = "/Users/Bumblebee/Desktop/Y4S1/CS5242/ProjectData/test/test"
 testlistNeed = os.listdir(testdirectory)
 testlistNeed = list(filter(lambda k: '.npy' in k, testlistNeed))
 testlistNeed.sort(key= lambda x: float(x.strip('.npy')))
-test = {} # initialize data
+test = [] # initialize data
 print("Start 0 pad test")
-for filename in testlistNeed: # do not hardcode! hardcoding will cause the code to not work if the number of samples is different!
+for filename in testlistNeed:
     if filename.endswith(".npy"):
-        tempFileName = "/home/e/evan2133/cs5242project/test/test/" + filename # load each file        
-        print(filename) # print the name file
+        tempFileName = "/Users/Bumblebee/Desktop/Y4S1/CS5242/ProjectData/test/test/" + filename # load each file
         testvalue = np.load(tempFileName) # load 1000,102 matrix
         testvalue_columns = testvalue.shape[0]
         if testvalue_columns < 1000:
-            testpadding = [[0 for i in range(102)] for j in range(1000 - testvalue_columns)]
-            testvalue = np.concatenate((testvalue, testpadding), axis = 0) # pad the matrix
-        test[filename] = testvalue # add to the data
+            lengthNeededToPad = 1000 - testvalue_columns
+            testvalue = np.pad(testvalue, ((0,lengthNeededToPad),(0,0)), 'constant')
 
-test = np.array(list(test.values()))
+        test.append(testvalue) # add to the data
+
+test = np.array(test)
 
 print("Finish 0 pad test")
 print("This is printing test data shape. It should be 6051 * 1000 * 102")
@@ -64,21 +68,13 @@ print(test.shape)
 
 #TODO (to save time): save the 0-padded train and test data so that it can be reloaded
 
-#data_raw = data_raw[:,:,:92]
-#print("This is printing feature selected (hashtricking) train data shape. It should be 18662 * 1000 * 92")
-#print(data.shape)
+
 print("Start to retrieve train labels")
-labels = pd.read_csv("/home/e/evan2133/cs5242project/train_kaggle.csv")
+labels = pd.read_csv("/Users/Bumblebee/Desktop/Y4S1/CS5242/Project/group7_project/train_kaggle.csv")
 labels = labels.drop(labels.columns[[0]], axis = 1).to_numpy()
 print("Finish to retrieve train labels")
 
 #OPTIONAL TODO: add train-test split for validation of the model (80%:20%)
-
-#to use auc
-def auc(actual, predict):
-    auc = tf.metrics.auc(actual, predict)[1]
-    K.get_session().run(tf.local_variables_initializer())
-    return auc
 
 print("Adding model")
 model = Sequential() # to be able to add several models at once
@@ -90,13 +86,19 @@ model.add(Dense(256, activation='relu')) # fully connected with relu (try with p
 model.add(Dropout(0.5)) # dropout the layers. Change appropiately if you have time and attempts.
 model.add(Dense(1, activation='sigmoid')) # fully connected with sigmoid (to cover some decimals), to 1 because we are dealing with a single number for the target values (technically this is a binary classification whether a file is malware or not)
 print("Finish adding model")
-myadam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
+
+myadam = optimizers.Adam(lr=0.002, beta_1=0.9, beta_2=0.999, amsgrad=False) # this is the Adam optimizer
+filepath = "/Users/Bumblebee/Desktop/Y4S1/CS5242/ProjectData/train/saved-model-{epoch:02d}-{val_acc:.2f}.hdf5"
+callbacks = keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=0, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 print("Compile model")
-model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=[auc]) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above, use AUC (optional, but strongly recommended) for determining quality of the learner (consistent with Kaggle)
+model.compile(loss='binary_crossentropy', optimizer=myadam, metrics=[tf.keras.metrics.AUC()], callbacks=[callbacks]) # using binary cross-entropy loss (since it is a binary classification) and the Adam optimizer stated above, use AUC (optional, but strongly recommended) for determining quality of the learner (consistent with Kaggle)
 print("Finish compile model. Now fit model")
-model.fit(data, labels, epochs=1000, batch_size=64, verbose=2) # batch_size is recommended to be in the power of 2
+
+model.fit(data, labels, epochs=15, batch_size=128, verbose=2) # batch_size is recommended to be in the power of 2
 print("Finish fit model. Now predict model")
-results = model.predict(test, batch_size=64, verbose=1) # test it
+
+results = model.predict(test, batch_size=128, verbose=1) # test it
+
 print("Finish predict model. Now saving to csv")
 results_df = pd.DataFrame(results, columns=['Predicted']) # kaggle format
 results_df.to_csv('results.csv', index=True, index_label='Id') # save for Kaggle submission :)
