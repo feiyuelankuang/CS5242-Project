@@ -8,7 +8,9 @@ also put train .csv in the same directory as the .py
 
 ## usage
 
-python nlpgoodfriend.py
+with BLSTM: python nlpgoodfriend.py
+
+without BLSTM: python nlpgoodfriend_onlycnn.py
 
 ## remarks
 
