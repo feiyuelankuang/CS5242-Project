@@ -106,4 +106,4 @@ print("Finish predict model. Now saving to csv")
 results_df = pd.DataFrame(results, columns=['Predicted']) # kaggle format
 results_df.to_csv('results.csv', index=True, index_label='Id') # save for Kaggle submission :)
 print("Everything is done!")
-# this yields our best model so far (99.194%, 0.005% higher than Anshu as of commit time
+# this yields our best model so far (99.194%, 0.005% higher than Anshu as of commit time)
