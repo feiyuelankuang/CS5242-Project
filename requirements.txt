@@ -1,0 +1,9 @@
+requirements
+python version
+- python3
+
+python packages
+- tensorflow 1.14
+- keras
+- numpy
+- pandas
