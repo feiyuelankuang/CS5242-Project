@@ -3,7 +3,10 @@ python version
 - python3
 
 python packages
-- tensorflow 1.14
+- tensorflow-gpu 1.14
 - keras
 - numpy
 - pandas
+
+others
+- CUDA (for GPU processing)
