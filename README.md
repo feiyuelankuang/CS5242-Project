@@ -1,4 +1,4 @@
-# CS5340 Project
+# CS5242 Project
 
 ## prerequisite
 
