@@ -1,4 +1,4 @@
-# group7_project
+# CS5340 Project
 
 ## prerequisite
 
